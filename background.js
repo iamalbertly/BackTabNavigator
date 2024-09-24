@@ -1,4 +1,5 @@
 // background.js
+console.log('Background script loaded');
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ 
     enabledDomains: [],
@@ -9,6 +10,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
+    console.log(`Tab updated: ${tab.url}`);
     applyMode(tab);
   }
 });
@@ -17,16 +19,21 @@ function applyMode(tab) {
   chrome.storage.sync.get(['mode', 'enabledDomains'], (result) => {
     const { mode, enabledDomains } = result;
     const domain = getDomain(tab.url);
+    console.log(`Applying mode: ${mode} for domain: ${domain}`);
     if (mode === 'all' || (mode === 'specific' && enabledDomains.includes(domain))) {
       chrome.tabs.sendMessage(tab.id, { action: 'enableBackTabNavigator' }, (response) => {
         if (chrome.runtime.lastError) {
           console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+        } else {
+          console.log('BackTab Navigator enabled');
         }
       });
     } else {
       chrome.tabs.sendMessage(tab.id, { action: 'disableBackTabNavigator' }, (response) => {
         if (chrome.runtime.lastError) {
           console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+        } else {
+          console.log('BackTab Navigator disabled');
         }
       });
     }

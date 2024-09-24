@@ -1,4 +1,5 @@
 // content.js
+console.log('Content script loaded');
 function handleClick(event) {
   if (event.button === 0 && !event.ctrlKey && !event.metaKey) {
     if (!event.shiftKey) {
