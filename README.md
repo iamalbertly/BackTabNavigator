@@ -13,6 +13,7 @@ BackTab Navigator is a Chrome extension that allows you to open links in backgro
 - Easy-to-use popup interface for managing settings and domain list
 - Mode changes apply immediately to all open tabs
 - Usage tracking for potential future features
+- Shift-click override: Holding the Shift key while clicking a link will open the link normally, without the extension's functionality
 
 ## Installation
 
@@ -28,6 +29,7 @@ BackTab Navigator is a Chrome extension that allows you to open links in backgro
 3. Select your desired mode of operation
 4. If using "Specific Domains" mode, add domains to the list
 5. You can also click the "Add Current Domain" button to add the domain of the current website you're on
+6. To open a link normally (without the extension's functionality), hold the Shift key while clicking the link
 
 ## Ideal Use Cases
 

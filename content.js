@@ -1,6 +1,6 @@
 // content.js
 function handleClick(event) {
-  if (event.button === 0 && !event.ctrlKey && !event.metaKey) {
+  if (event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
     event.preventDefault();
     chrome.runtime.sendMessage({
       action: 'openInBackgroundTab',
@@ -12,7 +12,6 @@ function handleClick(event) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'enableBackTabNavigator') {
     document.querySelectorAll('a').forEach(link => {
-      link.removeEventListener('click', handleClick); // Remove existing listener to avoid duplicates
       link.addEventListener('click', handleClick);
     });
   } else if (request.action === 'disableBackTabNavigator') {
