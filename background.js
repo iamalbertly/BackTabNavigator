@@ -34,7 +34,7 @@ function getDomain(url) {
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === 'sync' && changes.mode) {
+  if (namespace === 'sync' && 'mode' in changes) {
     chrome.tabs.query({}, (tabs) => {
       tabs.forEach(applyMode);
     });
