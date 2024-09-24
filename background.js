@@ -27,7 +27,12 @@ function applyMode(tab) {
 
 function getDomain(url) {
   try {
-    return new URL(url).hostname.replace("www.", "");
+    const parsedUrl = new URL(url);
+    if (parsedUrl.hostname.includes('.') || parsedUrl.hostname.includes(':')) {
+      return parsedUrl.hostname;
+    } else {
+      return url;
+    }
   } catch {
     return "";
   }
