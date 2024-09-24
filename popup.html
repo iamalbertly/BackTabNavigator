@@ -8,10 +8,19 @@
     button { width: 100%; margin-bottom: 10px; }
     ul { list-style-type: none; padding: 0; }
     li { margin-bottom: 5px; }
+    .description { background-color: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
   </style>
 </head>
 <body>
   <h2>BackTab Navigator</h2>
+  <div class="description">
+    <p>Open links in background tabs without switching to them. Choose a mode below:</p>
+    <ul>
+      <li><strong>Off:</strong> Extension is disabled</li>
+      <li><strong>All Websites:</strong> Works on all websites</li>
+      <li><strong>Specific Websites:</strong> Only works on listed URLs</li>
+    </ul>
+  </div>
   <select id="modeSelect">
     <option value="off">Off</option>
     <option value="all">All Websites</option>

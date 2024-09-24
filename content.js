@@ -15,6 +15,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       link.removeEventListener('click', handleClick); // Remove existing listener to avoid duplicates
       link.addEventListener('click', handleClick);
     });
+  } else if (request.action === 'disableBackTabNavigator') {
+    document.querySelectorAll('a').forEach(link => {
+      link.removeEventListener('click', handleClick);
+    });
   }
 });
 
