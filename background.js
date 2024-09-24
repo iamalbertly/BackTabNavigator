@@ -1,8 +1,8 @@
 // background.js
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ 
-    enabledUrls: [],
-    mode: 'off', // 'off', 'all', or 'specific'
+    enabledDomains: [],
+    mode: 'all', // 'all', 'specific', or 'off'
     usage: { all: 0, specific: 0 }
   });
 });
@@ -14,14 +14,23 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 function applyMode(tab) {
-  chrome.storage.sync.get(['mode', 'enabledUrls'], (result) => {
-    const { mode, enabledUrls } = result;
-    if (mode === 'all' || (mode === 'specific' && enabledUrls.some(url => tab.url.includes(url)))) {
+  chrome.storage.sync.get(['mode', 'enabledDomains'], (result) => {
+    const { mode, enabledDomains } = result;
+    const domain = getDomain(tab.url);
+    if (mode === 'all' || (mode === 'specific' && enabledDomains.includes(domain))) {
       chrome.tabs.sendMessage(tab.id, { action: 'enableBackTabNavigator' });
     } else {
       chrome.tabs.sendMessage(tab.id, { action: 'disableBackTabNavigator' });
     }
   });
+}
+
+function getDomain(url) {
+  try {
+    return new URL(url).hostname.replace("www.", "");
+  } catch {
+    return "";
+  }
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {

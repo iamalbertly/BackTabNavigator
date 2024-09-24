@@ -16,22 +16,23 @@
   <div class="description">
     <p>Open links in background tabs without switching to them. Choose a mode below:</p>
     <ul>
+      <li><strong>All Domains:</strong> Works on all domains</li>
+      <li><strong>Specific Domains:</strong> Only works on listed domains</li>
       <li><strong>Off:</strong> Extension is disabled</li>
-      <li><strong>All Websites:</strong> Works on all websites</li>
-      <li><strong>Specific Websites:</strong> Only works on listed URLs</li>
     </ul>
   </div>
   <select id="modeSelect">
+    <option value="all">All Domains</option>
+    <option value="specific">Specific Domains</option>
     <option value="off">Off</option>
-    <option value="all">All Websites</option>
-    <option value="specific">Specific Websites</option>
   </select>
-  <div id="urlInputSection" style="display: none;">
-    <input type="text" id="urlInput" placeholder="Enter URL (e.g., example.com)">
-    <button id="addUrl">Add URL</button>
+  <div id="domainInputSection" style="display: none;">
+    <input type="text" id="domainInput" placeholder="Enter domain (e.g., example.com)">
+    <button id="addDomain">Add Domain</button>
+    <button id="addCurrentDomain">Add Current Domain</button>
   </div>
-  <h3>Enabled URLs:</h3>
-  <ul id="urlList"></ul>
+  <h3>Enabled Domains:</h3>
+  <ul id="domainList"></ul>
   <script src="popup.js"></script>
 </body>
 </html>
