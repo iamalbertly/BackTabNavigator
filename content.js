@@ -1,4 +1,4 @@
-// content.js
+// content-script.js
 console.log('Content script loaded');
 
 function handleClick(event) {
@@ -20,19 +20,6 @@ function handleClick(event) {
   }
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Received message in content script:', request);
-  if (request.action === 'enableBackTabNavigator') {
-    console.log('Enabling BackTab Navigator');
-    document.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', handleClick);
-    });
-    sendResponse({ success: true });
-  } else if (request.action === 'disableBackTabNavigator') {
-    console.log('Disabling BackTab Navigator');
-    document.querySelectorAll('a').forEach(link => {
-      link.removeEventListener('click', handleClick);
-    });
-    sendResponse({ success: true });
-  }
+document.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', handleClick);
 });

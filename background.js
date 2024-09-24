@@ -17,12 +17,20 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 function applyMode(tabId, tab) {
+  // Check if the tab URL is an internal Chrome URL
+  if (tab.url.startsWith('chrome://')) {
+    return;
+  }
+
   chrome.storage.sync.get(['mode', 'enabledDomains'], (result) => {
     const { mode, enabledDomains } = result;
     const domain = getDomain(tab.url);
     console.log(`Applying mode: ${mode} for domain: ${domain}`);
     if (mode === 'all' || (mode === 'specific' && enabledDomains.includes(domain))) {
-      chrome.tabs.executeScript(tabId, { code: 'chrome.runtime.sendMessage({ action: "enableBackTabNavigator" });' }, (response) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ['content.js']
+      }, (response) => {
         if (chrome.runtime.lastError) {
           console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
         } else {
@@ -30,7 +38,10 @@ function applyMode(tabId, tab) {
         }
       });
     } else {
-      chrome.tabs.executeScript(tabId, { code: 'chrome.runtime.sendMessage({ action: "disableBackTabNavigator" });' }, (response) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ['content.js']
+      }, (response) => {
         if (chrome.runtime.lastError) {
           console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
         } else {
