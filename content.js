@@ -1,11 +1,20 @@
 // content.js
 function handleClick(event) {
-  if (event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-    event.preventDefault();
-    chrome.runtime.sendMessage({
-      action: 'openInBackgroundTab',
-      url: event.target.href
-    });
+  if (event.button === 0 && !event.ctrlKey && !event.metaKey) {
+    if (!event.shiftKey) {
+      event.preventDefault();
+      chrome.runtime.sendMessage({
+        action: 'openInBackgroundTab',
+        url: event.target.href
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+        }
+      });
+    } else {
+      // Shift-click, open the link normally
+      return true;
+    }
   }
 }
 
@@ -14,23 +23,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     document.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', handleClick);
     });
+    sendResponse({ success: true });
   } else if (request.action === 'disableBackTabNavigator') {
     document.querySelectorAll('a').forEach(link => {
       link.removeEventListener('click', handleClick);
     });
+    sendResponse({ success: true });
   }
-});
-
-// Error logging
-window.addEventListener('error', function(event) {
-  chrome.runtime.sendMessage({
-    action: 'logError',
-    error: {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-      error: event.error ? event.error.stack : null
-    }
-  });
 });

@@ -18,9 +18,17 @@ function applyMode(tab) {
     const { mode, enabledDomains } = result;
     const domain = getDomain(tab.url);
     if (mode === 'all' || (mode === 'specific' && enabledDomains.includes(domain))) {
-      chrome.tabs.sendMessage(tab.id, { action: 'enableBackTabNavigator' });
+      chrome.tabs.sendMessage(tab.id, { action: 'enableBackTabNavigator' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+        }
+      });
     } else {
-      chrome.tabs.sendMessage(tab.id, { action: 'disableBackTabNavigator' });
+      chrome.tabs.sendMessage(tab.id, { action: 'disableBackTabNavigator' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+        }
+      });
     }
   });
 }
@@ -59,8 +67,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.sync.set({ usage });
           }
         });
+        sendResponse({ success: true });
       });
     });
+    return true; // Indicate that we'll be sending a response asynchronously
   } else if (request.action === 'logError') {
     console.error('BackTab Navigator Error:', request.error);
   }
