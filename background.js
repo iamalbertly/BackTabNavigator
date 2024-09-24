@@ -12,7 +12,11 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
     console.log(`Tab updated: ${tab.url}`);
-    applyMode(tabId, tab);
+    try {
+      applyMode(tabId, tab);
+    } catch (error) {
+      console.error('Error in applyMode:', error);
+    }
   }
 });
 
@@ -23,35 +27,50 @@ function applyMode(tabId, tab) {
   }
 
   chrome.storage.sync.get(['mode', 'enabledDomains'], (result) => {
-    const { mode, enabledDomains } = result;
-    const domain = getDomain(tab.url);
-    console.log(`Applying mode: ${mode} for domain: ${domain}`);
-    if (mode === 'all' || (mode === 'specific' && enabledDomains.includes(domain))) {
-      chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        files: ['content.js']
-      }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
-        } else {
-          console.log('BackTab Navigator enabled');
+    try {
+      const { mode, enabledDomains } = result;
+      const domain = getDomain(tab.url);
+      console.log(`Applying mode: ${mode} for domain: ${domain}`);
+      if (mode === 'all' || (mode === 'specific' && enabledDomains.includes(domain))) {
+        try {
+          chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            files: ['content.js']
+          }, (response) => {
+            if (chrome.runtime.lastError) {
+              console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+            } else {
+              console.log('BackTab Navigator enabled');
+            }
+          });
+        } catch (executeScriptError) {
+          console.error('Error in chrome.scripting.executeScript:', executeScriptError);
+          console.log('TabId:', tabId);
+          console.log('Tab URL:', tab.url);
         }
-      });
-    } else {
-      chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        files: ['content.js']
-      }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
-        } else {
-          console.log('BackTab Navigator disabled');
+      } else {
+        try {
+          chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            files: ['content.js']
+          }, (response) => {
+            if (chrome.runtime.lastError) {
+              console.error('BackTab Navigator Error:', chrome.runtime.lastError.message);
+            } else {
+              console.log('BackTab Navigator disabled');
+            }
+          });
+        } catch (executeScriptError) {
+          console.error('Error in chrome.scripting.executeScript:', executeScriptError);
+          console.log('TabId:', tabId);
+          console.log('Tab URL:', tab.url);
         }
-      });
+      }
+    } catch (error) {
+      console.error('Error in applyMode:', error);
     }
   });
 }
-
 function getDomain(url) {
   try {
     const parsedUrl = new URL(url);
@@ -60,15 +79,23 @@ function getDomain(url) {
     } else {
       return url;
     }
-  } catch {
-    return "";
+  } catch (error) {
+    console.error('Error in getDomain:', error);
+    console.log('URL:', url);
+    return '';
   }
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'sync' && 'mode' in changes) {
     chrome.tabs.query({}, (tabs) => {
-      tabs.forEach((tab) => applyMode(tab.id, tab));
+      tabs.forEach((tab) => {
+        try {
+          applyMode(tab.id, tab);
+        } catch (error) {
+          console.error('Error in applyMode:', error);
+        }
+      });
     });
   }
 });
@@ -80,10 +107,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.tabs.create({ url: request.url, active: false, index: currentTab.index + 1 }, (newTab) => {
         // Update usage statistics
         chrome.storage.sync.get(['mode', 'usage'], (result) => {
-          const { mode, usage } = result;
-          if (mode === 'all' || mode === 'specific') {
-            usage[mode]++;
-            chrome.storage.sync.set({ usage });
+          try {
+            const { mode, usage } = result;
+            if (mode === 'all' || mode === 'specific') {
+              usage[mode]++;
+              chrome.storage.sync.set({ usage });
+            }
+          } catch (error) {
+            console.error('Error updating usage:', error);
           }
         });
         sendResponse({ success: true });
