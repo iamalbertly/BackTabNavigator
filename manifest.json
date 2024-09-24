@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "BackTab Navigator",
-  "version": "1.0",
-  "description": "Open links in background tabs for specified URLs",
+  "version": "1.1",
+  "description": "Open links in background tabs with customizable settings",
   "permissions": ["storage", "tabs"],
   "background": {
     "service_worker": "background.js"
@@ -15,5 +15,10 @@
   ],
   "action": {
     "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   }
 }
