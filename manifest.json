@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "BackTab Navigator",
-  "version": "1.1",
+  "version": "1.0",
   "description": "Open links in background tabs with customizable settings",
-  "permissions": ["storage", "tabs"],
+  "permissions": ["storage", "tabs","scripting","activeTab"],
   "background": {
     "service_worker": "background.js"
   },
