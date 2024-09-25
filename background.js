@@ -72,22 +72,5 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Indicate that we'll be sending a response asynchronously
   } else if (request.action === 'logError') {
     console.error('BackTab Navigator Error:', request.error);
-  } else if (request.action === 'downloadFile') {
-    downloadFile(request.url);
-    sendResponse({ success: true });
   }
 });
-
-function downloadFile(url) {
-  chrome.downloads.download({
-    url: url,
-    conflictAction: 'uniquify',
-    saveAs: true
-  }, (downloadId) => {
-    if (chrome.runtime.lastError) {
-      console.error('Download Error:', chrome.runtime.lastError.message);
-    } else {
-      console.log('Download started with ID:', downloadId);
-    }
-  });
-}
